@@ -9,32 +9,51 @@
 #import <UIKit/UIKit.h>
 
 
+/**
+ about EasyPermission's status enum
+ */
 typedef NS_ENUM(NSInteger,EasyAuthorityStatus){
-    EasyAuthorizationStatusNotDetermined = 0,
-    EasyAuthorizationStatusRestricted = 1,
-    EasyAuthorizationStatusDenied = 2,
-    EasyAuthorizationStatusAuthorized = 3,
-    EasyAuthorizationStatusTurnOff = 4
+    EasyAuthorizationStatusNotDetermined = 0, // User has not yet made a choice with regards to this application
+    EasyAuthorizationStatusRestricted = 1, // This application is not authorized
+    EasyAuthorizationStatusDenied = 2, // User has explicitly denied this application
+    EasyAuthorizationStatusAuthorized = 3, // User has authorized this application
+    EasyAuthorizationStatusTurnOff = 4 // the function not open,for location.....
 };
 
+
+/**
+ about location type
+ */
 typedef NS_ENUM(NSInteger,EasyLocationRequestType){
-    EasyLocationRequestTypeWhenIn = 0,
-    EasyLocationRequestTypeAlway = 1
+    EasyLocationRequestTypeWhenInUse = 0, // location when in use
+    EasyLocationRequestTypeAlway = 1  // alway location
 };
 
 typedef void(^StatusBlock)(EasyAuthorityStatus status);
 
-
+NS_ASSUME_NONNULL_BEGIN
 @interface EasyPermission : NSObject
 
+/**
+ jump to setting
+ */
++ (void)openSetting;
 
+/**
+ alert guide view
+ This method only supports simple guide,
+ if you should other guide,can custom
+ 
+ @param title big title
+ @param message subtitle
+ */
++ (void)alertTitle:(nullable NSString *)title message:(nullable NSString *)message;
 @end
 
 @interface EasyPermission(PhotoLibray)
 + (EasyAuthorityStatus)checkPhotoLibrayAuthority;
 + (void)requestPhotoLibrayPermission:(StatusBlock)statusBlock;
 @end
-
 
 @interface EasyPermission(Camera)
 + (EasyAuthorityStatus)checkCameraAuthority;
@@ -62,7 +81,7 @@ typedef void(^StatusBlock)(EasyAuthorityStatus status);
 @end
 
 @interface EasyPermission(Notification)
-
++ (void)checkNotificationAuthorityStatus:(StatusBlock)statusBlock;
 @end
 
 @interface EasyPermission(Calendar)
@@ -75,4 +94,4 @@ typedef void(^StatusBlock)(EasyAuthorityStatus status);
 + (void)requestReminderPermission:(StatusBlock)statusBlock;
 @end
 
-
+NS_ASSUME_NONNULL_END

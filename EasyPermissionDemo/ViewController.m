@@ -28,10 +28,7 @@
 }
 
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
-//    [EasyPermission requestLocationPermissionType:EasyLocationRequestTypeWhenIn completion:^(EasyAuthorityStatus status) {
-//        [self test];
-//    }];
-    [EasyPermission requestAddressBookPermission:^(EasyAuthorityStatus status) {
+    [EasyPermission requestLocationPermissionType:EasyLocationRequestTypeAlway completion:^(EasyAuthorityStatus status) {
         [self test];
     }];
 }

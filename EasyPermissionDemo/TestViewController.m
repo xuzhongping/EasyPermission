@@ -8,6 +8,7 @@
 
 #import "TestViewController.h"
 #import "ViewController.h"
+#import "EasyPermission.h"
 
 @interface TestViewController ()
 
@@ -29,5 +30,6 @@
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
     ViewController *vc = [ViewController new];
     [self.navigationController pushViewController:vc animated:YES];
+//    [EasyPermission alertTitle:@"开启权限" message:@"请前往开启权限"];
 }
 @end

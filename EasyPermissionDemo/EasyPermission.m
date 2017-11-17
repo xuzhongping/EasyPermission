@@ -14,33 +14,38 @@
 #import <CoreLocation/CoreLocation.h>
 #import <EventKit/EventKit.h>
 #import <MediaPlayer/MediaPlayer.h>
+#import <UserNotifications/UserNotifications.h>
 
 @interface EasyPermissionHelper:NSObject<CLLocationManagerDelegate>
-@property (nonatomic, strong) CLLocationManager *clmgr;
-@property (nonatomic,   weak) StatusBlock statusBlock;
-@property (nonatomic, assign) BOOL isRequestStatus;
-
+{
+    @public
+    CLLocationManager *_lmg;
+    StatusBlock _lcBlock;
+}
 @end
 
 @implementation  EasyPermissionHelper
-/*
- *  locationManager:didChangeAuthorizationStatus:
- *
- *  Discussion:
- *    Invoked when the authorization status changes for this application.
- */
 extern inline void asyncMainQueue_block(void(^block)(void));
+extern pthread_mutex_t  _location_lock;
+
 - (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status{
-    if (!self.isRequestStatus) return;
     
-    if (status == kCLAuthorizationStatusAuthorizedAlways || status == kCLAuthorizationStatusAuthorizedWhenInUse) {
+    pthread_mutex_unlock(&_location_lock);
+    if (!_lcBlock) return;
+    
+    if (status == kCLAuthorizationStatusAuthorizedAlways ||
+        status == kCLAuthorizationStatusAuthorizedWhenInUse)
+    {
         asyncMainQueue_block(^{
-            if (self.statusBlock) {
-                self.statusBlock(EasyAuthorizationStatusAuthorized);
-            }
+            _lcBlock(EasyAuthorizationStatusAuthorized);
+        });
+    }else if (status == kCLAuthorizationStatusDenied){
+        asyncMainQueue_block(^{
+            _lcBlock(EasyAuthorizationStatusDenied);
         });
     }
-    [self setIsRequestStatus:NO];
+    _lmg.delegate = nil;
+    
 }
 @end
 
@@ -53,11 +58,11 @@ static pthread_mutex_t          _camera_lock;
 static pthread_mutex_t          _addressBook_lock;
 static pthread_mutex_t          _microphone_lock;
 static pthread_mutex_t          _mediaLibrary_lock;
-static pthread_mutex_t          _location_lock;
 static pthread_mutex_t          _bluetooth_lock;
 static pthread_mutex_t          _notifications_lock;
 static pthread_mutex_t          _calendar_lock;
 static pthread_mutex_t          _reminder_lock;
+       pthread_mutex_t          _location_lock;
 
 static EasyPermissionHelper     *_helper;
 
@@ -91,9 +96,7 @@ inline void asyncMainQueue_block(void(^block)(void)){
     pthread_mutex_init(&_reminder_lock, NULL);
     
     _helper = [[EasyPermissionHelper alloc]init];
-    [_helper setIsRequestStatus:NO];
-    _helper.clmgr = [[CLLocationManager alloc]init];
-    [_helper.clmgr setDelegate:_helper];
+
 }
 
 + (void)openSetting{
@@ -109,10 +112,20 @@ inline void asyncMainQueue_block(void(^block)(void)){
             [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:nil];
         }
     }
-
-    
 }
 
++ (void)alertTitle:(NSString *)title message:(NSString *)message{
+    UIAlertController *alertVc = [UIAlertController alertControllerWithTitle:title message:message preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *closeAc = [UIAlertAction actionWithTitle:@"关闭" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        
+    }];
+    UIAlertAction *settingAc = [UIAlertAction actionWithTitle:@"设置" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [self openSetting];
+    }];
+    [alertVc addAction:closeAc];
+    [alertVc addAction:settingAc];
+    [[UIApplication sharedApplication].keyWindow.rootViewController presentViewController:alertVc animated:YES completion:nil];
+}
 @end
 
 @implementation EasyPermission(PhotoLibray)
@@ -289,7 +302,7 @@ inline void asyncMainQueue_block(void(^block)(void)){
     EasyAuthorityStatus st = [self checkMicrophoneAuthority];
     dispatch_async(_concurrentQueue, ^{
         switch (st) {
-            case AVAuthorizationStatusNotDetermined:
+            case EasyAuthorizationStatusNotDetermined:
             {
                 [AVCaptureDevice requestAccessForMediaType:AVMediaTypeAudio completionHandler:^(BOOL granted) {
                     pthread_mutex_unlock(&_microphone_lock);
@@ -303,7 +316,7 @@ inline void asyncMainQueue_block(void(^block)(void)){
                 }];
             }
                 break;
-            case AVAuthorizationStatusRestricted:
+            case EasyAuthorizationStatusRestricted:
             {
                 pthread_mutex_unlock(&_microphone_lock);
                 asyncMainQueue_block(^{
@@ -311,7 +324,7 @@ inline void asyncMainQueue_block(void(^block)(void)){
                 });
             }
                 break;
-            case AVAuthorizationStatusDenied:
+            case EasyAuthorizationStatusDenied:
             {
                 pthread_mutex_unlock(&_microphone_lock);
                 asyncMainQueue_block(^{
@@ -319,7 +332,7 @@ inline void asyncMainQueue_block(void(^block)(void)){
                 });
             }
                 break;
-            case AVAuthorizationStatusAuthorized:
+            case EasyAuthorizationStatusAuthorized:
             {
                 pthread_mutex_unlock(&_microphone_lock);
                 asyncMainQueue_block(^{
@@ -337,14 +350,39 @@ inline void asyncMainQueue_block(void(^block)(void)){
 
 @implementation EasyPermission(MediaLibrary)
 + (EasyAuthorityStatus)checkMediaLibraryAuthority{
-    return (EasyAuthorityStatus)[MPMediaLibrary authorizationStatus];
+     MPMediaLibraryAuthorizationStatus st = [MPMediaLibrary authorizationStatus];
+    switch (st) {
+        case MPMediaLibraryAuthorizationStatusNotDetermined:
+        {
+            return EasyAuthorizationStatusNotDetermined;
+        }
+            break;
+        case MPMediaLibraryAuthorizationStatusDenied:
+        {
+            return EasyAuthorizationStatusNotDetermined;
+        }
+            break;
+        case MPMediaLibraryAuthorizationStatusRestricted:
+        {
+            return EasyAuthorizationStatusRestricted;
+        }
+            break;
+        case MPMediaLibraryAuthorizationStatusAuthorized:
+        {
+            return EasyAuthorizationStatusAuthorized;
+        }
+            break;
+            
+        default:
+            break;
+    }
 }
 + (void)requestMediaLibraryPermission:(StatusBlock)statusBlock{
     pthread_mutex_lock(&_mediaLibrary_lock);
     EasyAuthorityStatus st = [self checkMicrophoneAuthority];
     dispatch_async(_concurrentQueue, ^{
         switch (st) {
-            case AVAuthorizationStatusNotDetermined:
+            case EasyAuthorizationStatusNotDetermined:
             {
                 [MPMediaLibrary requestAuthorization:^(MPMediaLibraryAuthorizationStatus status) {
                     pthread_mutex_unlock(&_mediaLibrary_lock);
@@ -354,7 +392,7 @@ inline void asyncMainQueue_block(void(^block)(void)){
                 }];
             }
                 break;
-            case AVAuthorizationStatusRestricted:
+            case EasyAuthorizationStatusRestricted:
             {
                 pthread_mutex_unlock(&_mediaLibrary_lock);
                 asyncMainQueue_block(^{
@@ -362,7 +400,7 @@ inline void asyncMainQueue_block(void(^block)(void)){
                 });
             }
                 break;
-            case AVAuthorizationStatusDenied:
+            case EasyAuthorizationStatusDenied:
             {
                 pthread_mutex_unlock(&_mediaLibrary_lock);
                 asyncMainQueue_block(^{
@@ -370,7 +408,7 @@ inline void asyncMainQueue_block(void(^block)(void)){
                 });
             }
                 break;
-            case AVAuthorizationStatusAuthorized:
+            case EasyAuthorizationStatusAuthorized:
             {
                 pthread_mutex_unlock(&_mediaLibrary_lock);
                 asyncMainQueue_block(^{
@@ -392,51 +430,58 @@ inline void asyncMainQueue_block(void(^block)(void)){
         return EasyAuthorizationStatusTurnOff;
     }
     CLAuthorizationStatus st = [CLLocationManager authorizationStatus];
-    if (st == kCLAuthorizationStatusAuthorizedAlways || st == kCLAuthorizationStatusAuthorizedWhenInUse) {
+    if (st == kCLAuthorizationStatusAuthorizedAlways ||
+        st == kCLAuthorizationStatusAuthorizedWhenInUse) {
         return EasyAuthorizationStatusAuthorized;
     }
     return (EasyAuthorityStatus)[CLLocationManager authorizationStatus];
 }
 + (void)requestLocationPermissionType:(EasyLocationRequestType)type completion:(StatusBlock)statusBlock{
-    _helper.statusBlock = statusBlock;
+    pthread_mutex_lock(&_location_lock);
     EasyAuthorityStatus st = [self checkLocationAuthority];
-    dispatch_async(_concurrentQueue, ^{
         switch (st) {
-            case kCLAuthorizationStatusNotDetermined:
+            case EasyAuthorizationStatusNotDetermined:
             {
-                [_helper setIsRequestStatus:YES];
-                if (type == EasyLocationRequestTypeWhenIn) {
-                    [_helper.clmgr requestWhenInUseAuthorization];
+                CLLocationManager *lmg = [CLLocationManager new];
+                _helper->_lmg = lmg;
+                _helper->_lcBlock = statusBlock;
+                lmg.delegate = _helper;
+                if (type == EasyLocationRequestTypeWhenInUse) {
+                    [lmg requestWhenInUseAuthorization];
                 }else{
-                    [_helper.clmgr requestAlwaysAuthorization];
+                    [lmg requestAlwaysAuthorization];
                 }
             }
                 break;
-            case kCLAuthorizationStatusRestricted:
+            case EasyAuthorizationStatusRestricted:
             {
+                pthread_mutex_unlock(&_location_lock);
                 asyncMainQueue_block(^{
                     statusBlock(EasyAuthorizationStatusRestricted);
                 });
             }
                 break;
-            case kCLAuthorizationStatusDenied:
+            case EasyAuthorizationStatusDenied:
             {
+                pthread_mutex_unlock(&_location_lock);
                 asyncMainQueue_block(^{
                     statusBlock(EasyAuthorizationStatusDenied);
                 });
             }
                 break;
-            case kCLAuthorizationStatusAuthorizedAlways:
+            case EasyAuthorizationStatusAuthorized:
             {
+                pthread_mutex_unlock(&_location_lock);
                 asyncMainQueue_block(^{
                     statusBlock(EasyAuthorizationStatusAuthorized);
                 });
             }
                 break;
-            case kCLAuthorizationStatusAuthorizedWhenInUse:
+            case EasyAuthorizationStatusTurnOff:
             {
+                pthread_mutex_unlock(&_location_lock);
                 asyncMainQueue_block(^{
-                    statusBlock(EasyAuthorizationStatusAuthorized);
+                    statusBlock(EasyAuthorizationStatusTurnOff);
                 });
             }
                 break;
@@ -444,17 +489,62 @@ inline void asyncMainQueue_block(void(^block)(void)){
             default:
                 break;
         }
-    });
-
 }
 
 @end
 
 
 @implementation EasyPermission(Notification)
-- (void)s{
-    [[UIApplication sharedApplication] currentUserNotificationSettings];
+
++ (void)checkNotificationAuthorityStatus:(StatusBlock)statusBlock{
+    if (currentVersion() < 10.0) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored"-Wdeprecated-declarations"
+        UIUserNotificationSettings *settings = [[UIApplication sharedApplication] currentUserNotificationSettings];
+         UIUserNotificationType notiTypes = settings.types;
+        
+        if (notiTypes == UIUserNotificationTypeNone) {
+            asyncMainQueue_block(^{
+               statusBlock == nil?:statusBlock(EasyAuthorizationStatusDenied);
+            });
+        }else{
+            asyncMainQueue_block(^{
+                statusBlock == nil?:statusBlock(EasyAuthorizationStatusAuthorized);
+            });
+        }
+#pragma clang diagnostic pop
+    }else{
+        [[UNUserNotificationCenter currentNotificationCenter] getNotificationSettingsWithCompletionHandler:^(UNNotificationSettings * _Nonnull settings) {
+            UNAuthorizationStatus st = settings.authorizationStatus;
+            EasyAuthorityStatus est;
+            switch (st) {
+                case UNAuthorizationStatusNotDetermined:
+                    {
+                        est = EasyAuthorizationStatusNotDetermined;
+                    }
+                    break;
+                case UNAuthorizationStatusDenied:
+                {
+                    est = EasyAuthorizationStatusDenied;
+                }
+                    break;
+                case UNAuthorizationStatusAuthorized:
+                {
+                    est = EasyAuthorizationStatusAuthorized;
+                }
+                    break;
+                    
+                default:
+                    break;
+            }
+            asyncMainQueue_block(^{
+                statusBlock == nil?:statusBlock(est);
+            });
+        }];;
+    }
 }
+
+
 @end
 
 @implementation EasyPermission(Calendar)
@@ -466,7 +556,7 @@ inline void asyncMainQueue_block(void(^block)(void)){
     EasyAuthorityStatus st = [self checkCalendarAuthority];
     dispatch_async(_concurrentQueue, ^{
         switch (st) {
-            case AVAuthorizationStatusNotDetermined:
+            case EasyAuthorizationStatusNotDetermined:
             {
                 [[EKEventStore new] requestAccessToEntityType:EKEntityTypeEvent completion:^(BOOL granted, NSError * _Nullable error) {
                     pthread_mutex_unlock(&_calendar_lock);
@@ -480,7 +570,7 @@ inline void asyncMainQueue_block(void(^block)(void)){
                 }];
             }
                 break;
-            case AVAuthorizationStatusRestricted:
+            case EasyAuthorizationStatusRestricted:
             {
                 pthread_mutex_unlock(&_calendar_lock);
                 asyncMainQueue_block(^{
@@ -488,7 +578,7 @@ inline void asyncMainQueue_block(void(^block)(void)){
                 });
             }
                 break;
-            case AVAuthorizationStatusDenied:
+            case EasyAuthorizationStatusDenied:
             {
                 pthread_mutex_unlock(&_calendar_lock);
                 asyncMainQueue_block(^{
@@ -496,7 +586,7 @@ inline void asyncMainQueue_block(void(^block)(void)){
                 });
             }
                 break;
-            case AVAuthorizationStatusAuthorized:
+            case EasyAuthorizationStatusAuthorized:
             {
                 pthread_mutex_unlock(&_calendar_lock);
                 asyncMainQueue_block(^{
@@ -521,7 +611,7 @@ inline void asyncMainQueue_block(void(^block)(void)){
     EasyAuthorityStatus st = [self checkCalendarAuthority];
     dispatch_async(_concurrentQueue, ^{
         switch (st) {
-            case AVAuthorizationStatusNotDetermined:
+            case EasyAuthorizationStatusNotDetermined:
             {
                 [[EKEventStore new] requestAccessToEntityType:EKEntityTypeReminder completion:^(BOOL granted, NSError * _Nullable error) {
                     pthread_mutex_unlock(&_reminder_lock);
@@ -535,7 +625,7 @@ inline void asyncMainQueue_block(void(^block)(void)){
                 }];
             }
                 break;
-            case AVAuthorizationStatusRestricted:
+            case EasyAuthorizationStatusRestricted:
             {
                 pthread_mutex_unlock(&_reminder_lock);
                 asyncMainQueue_block(^{
@@ -543,7 +633,7 @@ inline void asyncMainQueue_block(void(^block)(void)){
                 });
             }
                 break;
-            case AVAuthorizationStatusDenied:
+            case EasyAuthorizationStatusDenied:
             {
                 pthread_mutex_unlock(&_reminder_lock);
                 asyncMainQueue_block(^{
@@ -551,7 +641,7 @@ inline void asyncMainQueue_block(void(^block)(void)){
                 });
             }
                 break;
-            case AVAuthorizationStatusAuthorized:
+            case EasyAuthorizationStatusAuthorized:
             {
                 pthread_mutex_unlock(&_reminder_lock);
                 asyncMainQueue_block(^{

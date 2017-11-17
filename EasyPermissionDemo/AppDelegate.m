@@ -7,6 +7,7 @@
 //
 
 #import "AppDelegate.h"
+#import "EasyPermission.h"
 
 @interface AppDelegate ()
 
