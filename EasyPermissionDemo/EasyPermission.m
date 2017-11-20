@@ -20,7 +20,7 @@
 {
     @public
     CLLocationManager *_lmg;
-    StatusBlock _lcBlock;
+    StatusBlock _locationBlock;
 }
 @end
 
@@ -31,21 +31,22 @@ extern pthread_mutex_t  _location_lock;
 - (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status{
     
     pthread_mutex_unlock(&_location_lock);
-    if (!_lcBlock) return;
+
+    if (!_locationBlock) return;
+    if (status == kCLAuthorizationStatusNotDetermined) return;
     
     if (status == kCLAuthorizationStatusAuthorizedAlways ||
         status == kCLAuthorizationStatusAuthorizedWhenInUse)
     {
         asyncMainQueue_block(^{
-            _lcBlock(EasyAuthorizationStatusAuthorized);
+            _locationBlock(EasyAuthorizationStatusAuthorized);
         });
     }else if (status == kCLAuthorizationStatusDenied){
         asyncMainQueue_block(^{
-            _lcBlock(EasyAuthorizationStatusDenied);
+            _locationBlock(EasyAuthorizationStatusDenied);
         });
     }
     _lmg.delegate = nil;
-    
 }
 @end
 
@@ -142,7 +143,7 @@ inline void asyncMainQueue_block(void(^block)(void)){
                 [PHPhotoLibrary requestAuthorization:^(PHAuthorizationStatus status) {
                     pthread_mutex_unlock(&_photoLibrary_lock);
                     asyncMainQueue_block(^{
-                        statusBlock((EasyAuthorityStatus)status);
+                        statusBlock == nil?:statusBlock((EasyAuthorityStatus)status);
                     });
                 }];
             }
@@ -151,7 +152,7 @@ inline void asyncMainQueue_block(void(^block)(void)){
             {
                 pthread_mutex_unlock(&_photoLibrary_lock);
                 asyncMainQueue_block(^{
-                    statusBlock(EasyAuthorizationStatusRestricted);
+                    statusBlock == nil?:statusBlock(EasyAuthorizationStatusRestricted);
                 });
             }
                 break;
@@ -159,7 +160,7 @@ inline void asyncMainQueue_block(void(^block)(void)){
             {
                 pthread_mutex_unlock(&_photoLibrary_lock);
                 asyncMainQueue_block(^{
-                    statusBlock(EasyAuthorizationStatusDenied);
+                    statusBlock == nil?:statusBlock(EasyAuthorizationStatusDenied);
                 });
                 
             }
@@ -168,7 +169,7 @@ inline void asyncMainQueue_block(void(^block)(void)){
             {
                 pthread_mutex_unlock(&_photoLibrary_lock);
                 asyncMainQueue_block(^{
-                    statusBlock(EasyAuthorizationStatusAuthorized);
+                    statusBlock == nil?:statusBlock(EasyAuthorizationStatusAuthorized);
                 });
                 
             }
@@ -200,7 +201,7 @@ inline void asyncMainQueue_block(void(^block)(void)){
                         cst = EasyAuthorizationStatusAuthorized;
                     }
                     asyncMainQueue_block(^{
-                        statusBlock(cst);
+                        statusBlock == nil?:statusBlock(cst);
                     });
                 }];
             }
@@ -209,7 +210,7 @@ inline void asyncMainQueue_block(void(^block)(void)){
             {
                 pthread_mutex_unlock(&_camera_lock);
                 asyncMainQueue_block(^{
-                    statusBlock(EasyAuthorizationStatusRestricted);
+                    statusBlock == nil?:statusBlock(EasyAuthorizationStatusRestricted);
                 });
             }
                 break;
@@ -217,7 +218,7 @@ inline void asyncMainQueue_block(void(^block)(void)){
             {
                 pthread_mutex_unlock(&_camera_lock);
                 asyncMainQueue_block(^{
-                    statusBlock(EasyAuthorizationStatusDenied);
+                    statusBlock == nil?:statusBlock(EasyAuthorizationStatusDenied);
                 });
             }
                 break;
@@ -225,7 +226,7 @@ inline void asyncMainQueue_block(void(^block)(void)){
             {
                 pthread_mutex_unlock(&_camera_lock);
                 asyncMainQueue_block(^{
-                    statusBlock(EasyAuthorizationStatusAuthorized);
+                    statusBlock == nil?:statusBlock(EasyAuthorizationStatusAuthorized);
                 });
             }
                 break;
@@ -255,7 +256,7 @@ inline void asyncMainQueue_block(void(^block)(void)){
                         cst = EasyAuthorizationStatusAuthorized;
                     }
                     asyncMainQueue_block(^{
-                        statusBlock(cst);
+                        statusBlock == nil?:statusBlock(cst);
                     });
                 }];
                 
@@ -265,7 +266,7 @@ inline void asyncMainQueue_block(void(^block)(void)){
             {
                 pthread_mutex_unlock(&_addressBook_lock);
                 asyncMainQueue_block(^{
-                    statusBlock(EasyAuthorizationStatusRestricted);
+                    statusBlock == nil?:statusBlock(EasyAuthorizationStatusRestricted);
                 });
             }
                 break;
@@ -273,7 +274,7 @@ inline void asyncMainQueue_block(void(^block)(void)){
             {
                 pthread_mutex_unlock(&_addressBook_lock);
                 asyncMainQueue_block(^{
-                    statusBlock(EasyAuthorizationStatusDenied);
+                    statusBlock == nil?:statusBlock(EasyAuthorizationStatusDenied);
                 });
             }
                 break;
@@ -281,7 +282,7 @@ inline void asyncMainQueue_block(void(^block)(void)){
             {
                 pthread_mutex_unlock(&_addressBook_lock);
                 asyncMainQueue_block(^{
-                    statusBlock(EasyAuthorizationStatusAuthorized);
+                    statusBlock == nil?:statusBlock(EasyAuthorizationStatusAuthorized);
                 });
             }
                 break;
@@ -311,7 +312,7 @@ inline void asyncMainQueue_block(void(^block)(void)){
                         cst = EasyAuthorizationStatusAuthorized;
                     }
                     asyncMainQueue_block(^{
-                        statusBlock(cst);
+                        statusBlock == nil?:statusBlock(cst);
                     });
                 }];
             }
@@ -320,7 +321,7 @@ inline void asyncMainQueue_block(void(^block)(void)){
             {
                 pthread_mutex_unlock(&_microphone_lock);
                 asyncMainQueue_block(^{
-                    statusBlock(EasyAuthorizationStatusRestricted);
+                    statusBlock == nil?:statusBlock(EasyAuthorizationStatusRestricted);
                 });
             }
                 break;
@@ -328,7 +329,7 @@ inline void asyncMainQueue_block(void(^block)(void)){
             {
                 pthread_mutex_unlock(&_microphone_lock);
                 asyncMainQueue_block(^{
-                    statusBlock(EasyAuthorizationStatusDenied);
+                    statusBlock == nil?:statusBlock(EasyAuthorizationStatusDenied);
                 });
             }
                 break;
@@ -336,7 +337,7 @@ inline void asyncMainQueue_block(void(^block)(void)){
             {
                 pthread_mutex_unlock(&_microphone_lock);
                 asyncMainQueue_block(^{
-                    statusBlock(EasyAuthorizationStatusAuthorized);
+                    statusBlock == nil?:statusBlock(EasyAuthorizationStatusAuthorized);
                 });
             }
                 break;
@@ -387,7 +388,7 @@ inline void asyncMainQueue_block(void(^block)(void)){
                 [MPMediaLibrary requestAuthorization:^(MPMediaLibraryAuthorizationStatus status) {
                     pthread_mutex_unlock(&_mediaLibrary_lock);
                     asyncMainQueue_block(^{
-                        statusBlock((EasyAuthorityStatus)status);
+                        statusBlock == nil?:statusBlock((EasyAuthorityStatus)status);
                     });
                 }];
             }
@@ -396,7 +397,7 @@ inline void asyncMainQueue_block(void(^block)(void)){
             {
                 pthread_mutex_unlock(&_mediaLibrary_lock);
                 asyncMainQueue_block(^{
-                    statusBlock(EasyAuthorizationStatusRestricted);
+                    statusBlock == nil?:statusBlock(EasyAuthorizationStatusRestricted);
                 });
             }
                 break;
@@ -404,7 +405,7 @@ inline void asyncMainQueue_block(void(^block)(void)){
             {
                 pthread_mutex_unlock(&_mediaLibrary_lock);
                 asyncMainQueue_block(^{
-                    statusBlock(EasyAuthorizationStatusDenied);
+                    statusBlock == nil?:statusBlock(EasyAuthorizationStatusDenied);
                 });
             }
                 break;
@@ -412,7 +413,7 @@ inline void asyncMainQueue_block(void(^block)(void)){
             {
                 pthread_mutex_unlock(&_mediaLibrary_lock);
                 asyncMainQueue_block(^{
-                    statusBlock(EasyAuthorizationStatusAuthorized);
+                    statusBlock == nil?:statusBlock(EasyAuthorizationStatusAuthorized);
                 });
             }
                 break;
@@ -444,7 +445,7 @@ inline void asyncMainQueue_block(void(^block)(void)){
             {
                 CLLocationManager *lmg = [CLLocationManager new];
                 _helper->_lmg = lmg;
-                _helper->_lcBlock = statusBlock;
+                _helper->_locationBlock = statusBlock;
                 lmg.delegate = _helper;
                 if (type == EasyLocationRequestTypeWhenInUse) {
                     [lmg requestWhenInUseAuthorization];
@@ -457,7 +458,7 @@ inline void asyncMainQueue_block(void(^block)(void)){
             {
                 pthread_mutex_unlock(&_location_lock);
                 asyncMainQueue_block(^{
-                    statusBlock(EasyAuthorizationStatusRestricted);
+                    statusBlock == nil?:statusBlock(EasyAuthorizationStatusRestricted);
                 });
             }
                 break;
@@ -465,7 +466,7 @@ inline void asyncMainQueue_block(void(^block)(void)){
             {
                 pthread_mutex_unlock(&_location_lock);
                 asyncMainQueue_block(^{
-                    statusBlock(EasyAuthorizationStatusDenied);
+                    statusBlock == nil?:statusBlock(EasyAuthorizationStatusDenied);
                 });
             }
                 break;
@@ -473,7 +474,7 @@ inline void asyncMainQueue_block(void(^block)(void)){
             {
                 pthread_mutex_unlock(&_location_lock);
                 asyncMainQueue_block(^{
-                    statusBlock(EasyAuthorizationStatusAuthorized);
+                    statusBlock == nil?:statusBlock(EasyAuthorizationStatusAuthorized);
                 });
             }
                 break;
@@ -481,7 +482,7 @@ inline void asyncMainQueue_block(void(^block)(void)){
             {
                 pthread_mutex_unlock(&_location_lock);
                 asyncMainQueue_block(^{
-                    statusBlock(EasyAuthorizationStatusTurnOff);
+                    statusBlock == nil?:statusBlock(EasyAuthorizationStatusTurnOff);
                 });
             }
                 break;
@@ -565,7 +566,7 @@ inline void asyncMainQueue_block(void(^block)(void)){
                         cst = EasyAuthorizationStatusAuthorized;
                     }
                     asyncMainQueue_block(^{
-                        statusBlock(cst);
+                        statusBlock == nil?:statusBlock(cst);
                     });
                 }];
             }
@@ -574,7 +575,7 @@ inline void asyncMainQueue_block(void(^block)(void)){
             {
                 pthread_mutex_unlock(&_calendar_lock);
                 asyncMainQueue_block(^{
-                    statusBlock(EasyAuthorizationStatusRestricted);
+                    statusBlock == nil?:statusBlock(EasyAuthorizationStatusRestricted);
                 });
             }
                 break;
@@ -582,7 +583,7 @@ inline void asyncMainQueue_block(void(^block)(void)){
             {
                 pthread_mutex_unlock(&_calendar_lock);
                 asyncMainQueue_block(^{
-                    statusBlock(EasyAuthorizationStatusDenied);
+                    statusBlock == nil?:statusBlock(EasyAuthorizationStatusDenied);
                 });
             }
                 break;
@@ -590,7 +591,7 @@ inline void asyncMainQueue_block(void(^block)(void)){
             {
                 pthread_mutex_unlock(&_calendar_lock);
                 asyncMainQueue_block(^{
-                    statusBlock(EasyAuthorizationStatusAuthorized);
+                    statusBlock == nil?:statusBlock(EasyAuthorizationStatusAuthorized);
                 });
             }
                 break;
@@ -620,7 +621,7 @@ inline void asyncMainQueue_block(void(^block)(void)){
                         cst = EasyAuthorizationStatusAuthorized;
                     }
                     asyncMainQueue_block(^{
-                        statusBlock(cst);
+                        statusBlock == nil?:statusBlock(cst);
                     });
                 }];
             }
@@ -629,7 +630,7 @@ inline void asyncMainQueue_block(void(^block)(void)){
             {
                 pthread_mutex_unlock(&_reminder_lock);
                 asyncMainQueue_block(^{
-                    statusBlock(EasyAuthorizationStatusRestricted);
+                    statusBlock == nil?:statusBlock(EasyAuthorizationStatusRestricted);
                 });
             }
                 break;
@@ -637,7 +638,7 @@ inline void asyncMainQueue_block(void(^block)(void)){
             {
                 pthread_mutex_unlock(&_reminder_lock);
                 asyncMainQueue_block(^{
-                    statusBlock(EasyAuthorizationStatusDenied);
+                    statusBlock == nil?:statusBlock(EasyAuthorizationStatusDenied);
                 });
             }
                 break;
@@ -645,7 +646,7 @@ inline void asyncMainQueue_block(void(^block)(void)){
             {
                 pthread_mutex_unlock(&_reminder_lock);
                 asyncMainQueue_block(^{
-                    statusBlock(EasyAuthorizationStatusAuthorized);
+                    statusBlock == nil?:statusBlock(EasyAuthorizationStatusAuthorized);
                 });
             }
                 break;
