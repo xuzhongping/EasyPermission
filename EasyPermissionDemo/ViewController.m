@@ -29,7 +29,7 @@
 
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
     [EasyPermission requestLocationPermissionType:EasyLocationRequestTypeAlway completion:^(EasyAuthorityStatus status) {
-        [self test];
+        
     }];
 }
 

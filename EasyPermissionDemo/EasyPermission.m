@@ -33,7 +33,7 @@ extern pthread_mutex_t  _location_lock;
     pthread_mutex_unlock(&_location_lock);
 
     if (!_locationBlock) return;
-    if (status == kCLAuthorizationStatusNotDetermined) return;
+    if (status == kCLAuthorizationStatusNotDetermined) return;  // first request location
     
     if (status == kCLAuthorizationStatusAuthorizedAlways ||
         status == kCLAuthorizationStatusAuthorizedWhenInUse)
