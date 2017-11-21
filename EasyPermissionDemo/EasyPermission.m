@@ -73,7 +73,7 @@ static inline double currentVersion(){
 
 inline void asyncMainQueue_block(void(^block)(void)){
     if (block) {
-        if ([NSThread currentThread]) {
+        if ([NSThread isMainThread]) {
             block();
         }else{
             dispatch_async(_concurrentQueue, ^{
