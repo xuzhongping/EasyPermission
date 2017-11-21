@@ -7,7 +7,7 @@
 //
 
 #import "ViewController.h"
-#import "EasyPermission.h"
+#import "EasyPermission+PhotoLibrary.h"
 #import "Person.h"
 
 @interface ViewController ()
@@ -28,8 +28,9 @@
 }
 
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
-    [EasyPermission requestLocationPermissionType:EasyLocationRequestTypeAlway completion:^(EasyAuthorityStatus status) {
-        
+
+    [EasyPermission requestPhotoLibrayPermission:^(EasyAuthorityStatus status) {
+        [EasyPermission alertTitle:@"" message:@""];
     }];
 }
 

@@ -18,6 +18,16 @@
 		ED168CAA1FBD61280038ADDA /* EasyPermission.m in Sources */ = {isa = PBXBuildFile; fileRef = ED168CA91FBD61280038ADDA /* EasyPermission.m */; };
 		ED168CB01FBDDF4F0038ADDA /* TestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = ED168CAF1FBDDF4F0038ADDA /* TestViewController.m */; };
 		ED168CB31FBE74CC0038ADDA /* Person.m in Sources */ = {isa = PBXBuildFile; fileRef = ED168CB21FBE74CC0038ADDA /* Person.m */; };
+		ED6963331FC3FB57001A691D /* EasyPermission+PhotoLibrary.m in Sources */ = {isa = PBXBuildFile; fileRef = ED6963321FC3FB57001A691D /* EasyPermission+PhotoLibrary.m */; };
+		ED6963361FC3FC04001A691D /* EasyPermission+Camera.m in Sources */ = {isa = PBXBuildFile; fileRef = ED6963351FC3FC04001A691D /* EasyPermission+Camera.m */; };
+		ED6963391FC3FC9A001A691D /* EasyPermission+AddressBook.m in Sources */ = {isa = PBXBuildFile; fileRef = ED6963381FC3FC9A001A691D /* EasyPermission+AddressBook.m */; };
+		ED69633C1FC3FCF9001A691D /* EasyPermission+Microphone.m in Sources */ = {isa = PBXBuildFile; fileRef = ED69633B1FC3FCF9001A691D /* EasyPermission+Microphone.m */; };
+		ED69633F1FC3FD4D001A691D /* EasyPermission+MediaLibrary.m in Sources */ = {isa = PBXBuildFile; fileRef = ED69633E1FC3FD4D001A691D /* EasyPermission+MediaLibrary.m */; };
+		ED6963421FC3FD9C001A691D /* EasyPermission+Location.m in Sources */ = {isa = PBXBuildFile; fileRef = ED6963411FC3FD9C001A691D /* EasyPermission+Location.m */; };
+		ED6963451FC4018B001A691D /* EasyPermission+Notification.m in Sources */ = {isa = PBXBuildFile; fileRef = ED6963441FC4018B001A691D /* EasyPermission+Notification.m */; };
+		ED6963481FC407BA001A691D /* EasyPermission+Calendar.m in Sources */ = {isa = PBXBuildFile; fileRef = ED6963471FC407BA001A691D /* EasyPermission+Calendar.m */; };
+		ED69634B1FC40803001A691D /* EasyPermission+Reminder.m in Sources */ = {isa = PBXBuildFile; fileRef = ED69634A1FC40803001A691D /* EasyPermission+Reminder.m */; };
+		ED69634E1FC40E10001A691D /* EasyPermission+Health.m in Sources */ = {isa = PBXBuildFile; fileRef = ED69634D1FC40E10001A691D /* EasyPermission+Health.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -60,6 +70,26 @@
 		ED168CAF1FBDDF4F0038ADDA /* TestViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TestViewController.m; sourceTree = "<group>"; };
 		ED168CB11FBE74CC0038ADDA /* Person.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Person.h; sourceTree = "<group>"; };
 		ED168CB21FBE74CC0038ADDA /* Person.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Person.m; sourceTree = "<group>"; };
+		ED6963311FC3FB57001A691D /* EasyPermission+PhotoLibrary.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "EasyPermission+PhotoLibrary.h"; sourceTree = "<group>"; };
+		ED6963321FC3FB57001A691D /* EasyPermission+PhotoLibrary.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "EasyPermission+PhotoLibrary.m"; sourceTree = "<group>"; };
+		ED6963341FC3FC04001A691D /* EasyPermission+Camera.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "EasyPermission+Camera.h"; sourceTree = "<group>"; };
+		ED6963351FC3FC04001A691D /* EasyPermission+Camera.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "EasyPermission+Camera.m"; sourceTree = "<group>"; };
+		ED6963371FC3FC9A001A691D /* EasyPermission+AddressBook.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "EasyPermission+AddressBook.h"; sourceTree = "<group>"; };
+		ED6963381FC3FC9A001A691D /* EasyPermission+AddressBook.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "EasyPermission+AddressBook.m"; sourceTree = "<group>"; };
+		ED69633A1FC3FCF9001A691D /* EasyPermission+Microphone.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "EasyPermission+Microphone.h"; sourceTree = "<group>"; };
+		ED69633B1FC3FCF9001A691D /* EasyPermission+Microphone.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "EasyPermission+Microphone.m"; sourceTree = "<group>"; };
+		ED69633D1FC3FD4D001A691D /* EasyPermission+MediaLibrary.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "EasyPermission+MediaLibrary.h"; sourceTree = "<group>"; };
+		ED69633E1FC3FD4D001A691D /* EasyPermission+MediaLibrary.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "EasyPermission+MediaLibrary.m"; sourceTree = "<group>"; };
+		ED6963401FC3FD9C001A691D /* EasyPermission+Location.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "EasyPermission+Location.h"; sourceTree = "<group>"; };
+		ED6963411FC3FD9C001A691D /* EasyPermission+Location.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "EasyPermission+Location.m"; sourceTree = "<group>"; };
+		ED6963431FC4018B001A691D /* EasyPermission+Notification.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "EasyPermission+Notification.h"; sourceTree = "<group>"; };
+		ED6963441FC4018B001A691D /* EasyPermission+Notification.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "EasyPermission+Notification.m"; sourceTree = "<group>"; };
+		ED6963461FC407BA001A691D /* EasyPermission+Calendar.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "EasyPermission+Calendar.h"; sourceTree = "<group>"; };
+		ED6963471FC407BA001A691D /* EasyPermission+Calendar.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "EasyPermission+Calendar.m"; sourceTree = "<group>"; };
+		ED6963491FC40803001A691D /* EasyPermission+Reminder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "EasyPermission+Reminder.h"; sourceTree = "<group>"; };
+		ED69634A1FC40803001A691D /* EasyPermission+Reminder.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "EasyPermission+Reminder.m"; sourceTree = "<group>"; };
+		ED69634C1FC40E10001A691D /* EasyPermission+Health.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "EasyPermission+Health.h"; sourceTree = "<group>"; };
+		ED69634D1FC40E10001A691D /* EasyPermission+Health.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "EasyPermission+Health.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -110,6 +140,7 @@
 		ED168C751FBD60CD0038ADDA /* EasyPermissionDemo */ = {
 			isa = PBXGroup;
 			children = (
+				ED6963301FC3FB0A001A691D /* EasyPermission */,
 				ED168C761FBD60CD0038ADDA /* AppDelegate.h */,
 				ED168C771FBD60CD0038ADDA /* AppDelegate.m */,
 				ED168C791FBD60CD0038ADDA /* ViewController.h */,
@@ -121,8 +152,6 @@
 				ED168C811FBD60CD0038ADDA /* LaunchScreen.storyboard */,
 				ED168C841FBD60CD0038ADDA /* Info.plist */,
 				ED168C851FBD60CD0038ADDA /* main.m */,
-				ED168CA81FBD61280038ADDA /* EasyPermission.h */,
-				ED168CA91FBD61280038ADDA /* EasyPermission.m */,
 				ED168CB11FBE74CC0038ADDA /* Person.h */,
 				ED168CB21FBE74CC0038ADDA /* Person.m */,
 			);
@@ -145,6 +174,35 @@
 				ED168C9C1FBD60CD0038ADDA /* Info.plist */,
 			);
 			path = EasyPermissionDemoUITests;
+			sourceTree = "<group>";
+		};
+		ED6963301FC3FB0A001A691D /* EasyPermission */ = {
+			isa = PBXGroup;
+			children = (
+				ED168CA81FBD61280038ADDA /* EasyPermission.h */,
+				ED168CA91FBD61280038ADDA /* EasyPermission.m */,
+				ED6963311FC3FB57001A691D /* EasyPermission+PhotoLibrary.h */,
+				ED6963321FC3FB57001A691D /* EasyPermission+PhotoLibrary.m */,
+				ED6963341FC3FC04001A691D /* EasyPermission+Camera.h */,
+				ED6963351FC3FC04001A691D /* EasyPermission+Camera.m */,
+				ED6963371FC3FC9A001A691D /* EasyPermission+AddressBook.h */,
+				ED6963381FC3FC9A001A691D /* EasyPermission+AddressBook.m */,
+				ED69633A1FC3FCF9001A691D /* EasyPermission+Microphone.h */,
+				ED69633B1FC3FCF9001A691D /* EasyPermission+Microphone.m */,
+				ED69633D1FC3FD4D001A691D /* EasyPermission+MediaLibrary.h */,
+				ED69633E1FC3FD4D001A691D /* EasyPermission+MediaLibrary.m */,
+				ED6963401FC3FD9C001A691D /* EasyPermission+Location.h */,
+				ED6963411FC3FD9C001A691D /* EasyPermission+Location.m */,
+				ED6963431FC4018B001A691D /* EasyPermission+Notification.h */,
+				ED6963441FC4018B001A691D /* EasyPermission+Notification.m */,
+				ED6963461FC407BA001A691D /* EasyPermission+Calendar.h */,
+				ED6963471FC407BA001A691D /* EasyPermission+Calendar.m */,
+				ED6963491FC40803001A691D /* EasyPermission+Reminder.h */,
+				ED69634A1FC40803001A691D /* EasyPermission+Reminder.m */,
+				ED69634C1FC40E10001A691D /* EasyPermission+Health.h */,
+				ED69634D1FC40E10001A691D /* EasyPermission+Health.m */,
+			);
+			path = EasyPermission;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -215,6 +273,11 @@
 					ED168C721FBD60CD0038ADDA = {
 						CreatedOnToolsVersion = 9.0;
 						ProvisioningStyle = Automatic;
+						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
+						};
 					};
 					ED168C8A1FBD60CD0038ADDA = {
 						CreatedOnToolsVersion = 9.0;
@@ -280,11 +343,21 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				ED6963331FC3FB57001A691D /* EasyPermission+PhotoLibrary.m in Sources */,
+				ED6963361FC3FC04001A691D /* EasyPermission+Camera.m in Sources */,
 				ED168CB31FBE74CC0038ADDA /* Person.m in Sources */,
+				ED6963421FC3FD9C001A691D /* EasyPermission+Location.m in Sources */,
+				ED6963451FC4018B001A691D /* EasyPermission+Notification.m in Sources */,
 				ED168C7B1FBD60CD0038ADDA /* ViewController.m in Sources */,
 				ED168C861FBD60CD0038ADDA /* main.m in Sources */,
 				ED168CAA1FBD61280038ADDA /* EasyPermission.m in Sources */,
+				ED69633C1FC3FCF9001A691D /* EasyPermission+Microphone.m in Sources */,
+				ED69633F1FC3FD4D001A691D /* EasyPermission+MediaLibrary.m in Sources */,
+				ED6963481FC407BA001A691D /* EasyPermission+Calendar.m in Sources */,
+				ED69634B1FC40803001A691D /* EasyPermission+Reminder.m in Sources */,
+				ED6963391FC3FC9A001A691D /* EasyPermission+AddressBook.m in Sources */,
 				ED168C781FBD60CD0038ADDA /* AppDelegate.m in Sources */,
+				ED69634E1FC40E10001A691D /* EasyPermission+Health.m in Sources */,
 				ED168CB01FBDDF4F0038ADDA /* TestViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
